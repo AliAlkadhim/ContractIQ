@@ -1,0 +1,67 @@
+# -----------------------------
+# Core web + API
+# -----------------------------
+fastapi==0.128.0            # :contentReference[oaicite:1]{index=1}
+uvicorn[standard]==0.40.0   # :contentReference[oaicite:2]{index=2}
+jinja2==3.1.6               # :contentReference[oaicite:3]{index=3}
+python-multipart==0.0.21    # :contentReference[oaicite:4]{index=4}
+
+# -----------------------------
+# Settings + validation
+# -----------------------------
+pydantic==2.12.5            # :contentReference[oaicite:5]{index=5}
+pydantic-settings==2.12.0   # :contentReference[oaicite:6]{index=6}
+python-dotenv==1.2.1        # :contentReference[oaicite:7]{index=7}
+
+# -----------------------------
+# Database (SQLite now; Postgres later)
+# -----------------------------
+sqlalchemy==2.0.45          # :contentReference[oaicite:8]{index=8}
+
+# -----------------------------
+# LangChain (minimal usage)
+# -----------------------------
+langchain==1.2.0            # :contentReference[oaicite:9]{index=9}
+langchain-core==1.2.5       # :contentReference[oaicite:10]{index=10}
+langchain-community==0.4.1  # :contentReference[oaicite:11]{index=11}
+langchain-google-genai==4.1.2  # :contentReference[oaicite:12]{index=12}
+
+# -----------------------------
+# Google Gemini SDK (recommended modern SDK)
+# -----------------------------
+google-genai==1.56.0        # :contentReference[oaicite:13]{index=13}
+
+# (Optional legacy SDK; not required if using google-genai)
+# google-generativeai==0.8.6 # :contentReference[oaicite:14]{index=14}
+
+# -----------------------------
+# Vector DB (Pinecone)
+# -----------------------------
+pinecone==8.0.0             # :contentReference[oaicite:15]{index=15}
+
+# -----------------------------
+# Document processing
+# (leave as ranges to reduce dependency pain; we can lock later)
+# -----------------------------
+pypdf>=5,<7
+python-docx>=1,<2
+
+# -----------------------------
+# Cloud storage (GCS) — lock later if you want
+# (latest is moving; pinning is fine later after "pip freeze")
+# -----------------------------
+google-cloud-storage>=3,<4  # release stream includes 3.x in 2025 :contentReference[oaicite:16]{index=16}
+
+# -----------------------------
+# Dev / Testing
+# -----------------------------
+pytest>=8,<9
+httpx>=0.28,<0.29
+
+# -----------------------------
+# Notebooks (since you're starting in Jupyter)
+# -----------------------------
+ipykernel>=6,<7
+jupyterlab>=4,<5
+# datasets
+datasets
