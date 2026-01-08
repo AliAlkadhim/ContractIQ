@@ -65,3 +65,4 @@ ipykernel>=6,<7
 jupyterlab>=4,<5
 # datasets
 datasets
+sentence-transformers
