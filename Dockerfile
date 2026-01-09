@@ -21,4 +21,4 @@ RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTr
 COPY . /app
 
 # Cloud Run sets PORT; your container must listen on it
-CMD ["bash", "-lc", "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
+CMD ["bash", "-lc", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]
