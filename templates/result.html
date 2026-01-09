@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ContractIQ – Result</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <a href="/">← Back</a>
+
+      <h2>Question</h2>
+      <div class="card">{{ question }}</div>
+
+      <h2>Answer</h2>
+      <div class="card">{{ answer }}</div>
+
+      <h2>Citations</h2>
+      {% if citations and citations|length > 0 %}
+        <ul class="card">
+          {% for c in citations %}
+            <li style="margin-bottom: 14px;">
+              <div class="mono">{{ c["chunk_id"] }}</div>
+              <div class="quote">{{ c["quote_html"] | safe }}</div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="card muted">No citations returned.</div>
+      {% endif %}
+      
+    </div>
+  </body>
+</html>

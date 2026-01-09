@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ContractIQ</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>ContractIQ</h1>
+      <p class="muted">Pick a contract and ask a question. (Uses Pinecone + Gemini.)</p>
+
+      <form method="post" action="/ask" class="card">
+        <label>Contract</label>
+        <select name="doc_id">
+          <option value="">(Search across all contracts)</option>
+          {% for d in docs %}
+            <option value="{{ d['doc_id'] }}">{{ d['title'] }}</option>
+          {% endfor %}
+        </select>
+
+        <label>Question</label>
+        <input name="question" type="text" placeholder="e.g., What is the governing law?" required />
+
+        <label>Top K chunks</label>
+        <input name="top_k" type="number" min="3" max="80" value="12" />
+
+        <button type="submit">Ask</button>
+      </form>
+
+      <p class="muted">API docs: <a href="/docs">/docs</a></p>
+    </div>
+  </body>
+</html>

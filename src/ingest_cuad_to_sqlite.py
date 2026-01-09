@@ -5,10 +5,10 @@ from typing import Dict, List, Tuple
 from huggingface_hub import snapshot_download
 from sqlalchemy import text
 
-from config import settings
-from db import init_schema, get_conn
-from documents import make_doc_id
-from chunking import chunk_text, make_chunk_id
+from src.config import settings
+from src.db import init_schema, get_conn
+from src.documents import make_doc_id
+from src.chunking import chunk_text, make_chunk_id
 
 
 REPO_ID = "theatticusproject/cuad"

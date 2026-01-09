@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from sqlalchemy import create_engine, text
-from config import settings
+from src.config import settings
 
 
 def make_engine():

@@ -1,5 +1,5 @@
 import os
-from config import settings
+from src.config import settings
 
 if settings.force_cpu:
     os.environ["CUDA_VISIBLE_DEVICES"] = ""

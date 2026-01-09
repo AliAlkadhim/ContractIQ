@@ -1,8 +1,8 @@
 import os
 from typing import List, Dict
 from sqlalchemy import text
-from config import settings
-from db import get_conn
+from src.config import settings
+from src.db import get_conn
 
 from pinecone import Pinecone
 

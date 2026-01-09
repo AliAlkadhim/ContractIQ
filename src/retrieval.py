@@ -1,7 +1,7 @@
 import os
 from typing import List, Dict, Optional
 from pinecone import Pinecone
-from config import settings
+from src.config import settings
 
 if settings.force_cpu:
     os.environ["CUDA_VISIBLE_DEVICES"] = ""

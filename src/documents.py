@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Optional, List, Dict
 from sqlalchemy import text
 
-from config import settings
-from db import get_conn
+from src.config import settings
+from src.db import get_conn
 
 
 def make_doc_id(title: str) -> str:
