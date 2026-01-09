@@ -1,5 +1,6 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
+import os
 
 ROOT = Path(__file__).resolve().parent.parent   # project root
 ENV_PATH = ROOT / ".env"
@@ -16,7 +17,8 @@ class Settings(BaseSettings):
     gemini_api_key: str
 
     # Paths (ABSOLUTE by default)
-    sqlite_path: str = str(ROOT / "data" / "contractrag.db")
+    # sqlite_path: str = str(ROOT / "data" / "contractrag.db")
+    sqlite_path: str = os.getenv("SQLITE_PATH", str(ROOT / "data" / "contractrag.db"))
     raw_data_dir: str = str(ROOT / "data" / "raw")
 
     # Pinecone

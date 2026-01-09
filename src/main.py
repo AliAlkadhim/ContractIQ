@@ -6,6 +6,11 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+
+import os
+
+from google.cloud import storage
+
 from src.documents import list_documents
 from src.rag import rag_answer  # or rag_answer if you prefer
 
@@ -20,6 +25,34 @@ app = FastAPI()
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
+def _maybe_download_sqlite_db():
+    sqlite_path = os.getenv("SQLITE_PATH", "") or ""
+    if not sqlite_path:
+        return  # fall back to config default
+
+    p = Path(sqlite_path)
+    if p.exists() and p.stat().st_size > 0:
+        return
+
+    bucket = os.getenv("GCS_DB_BUCKET")
+    obj = os.getenv("GCS_DB_OBJECT")
+    if not bucket or not obj:
+        raise RuntimeError(
+            "SQLITE_PATH set but GCS_DB_BUCKET / GCS_DB_OBJECT not set. "
+            "Set them to download the populated SQLite DB from GCS."
+        )
+
+    p.parent.mkdir(parents=True, exist_ok=True)
+
+    client = storage.Client()
+    b = client.bucket(bucket)
+    blob = b.blob(obj)
+    blob.download_to_filename(str(p))
+
+@app.on_event("startup")
+def startup_event():
+
+    
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 
@@ -91,6 +124,7 @@ def ask(
             "doc_id": doc_id,
             "answer": resp.get("answer", ""),
             # "citations": resp.get("citations", []),
+            "sources": resp.get("sources", []),
             "citations": citations
         },
     )

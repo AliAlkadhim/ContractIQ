@@ -1,34 +1,127 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>ContractIQ – Result</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ContractIQ • Result</title>
     <link rel="stylesheet" href="/static/style.css" />
   </head>
+
   <body>
-    <div class="container">
-      <a href="/">← Back</a>
+    <div class="bg"></div>
 
-      <h2>Question</h2>
-      <div class="card">{{ question }}</div>
+    <header class="header">
+      <div class="container header-inner">
+        <div class="brand">
+          <div class="logo">CI</div>
+          <div>
+            <div class="brand-title">ContractIQ</div>
+            <div class="brand-sub">Answer + evidence</div>
+          </div>
+        </div>
 
-      <h2>Answer</h2>
-      <div class="card">{{ answer }}</div>
+        <div class="header-actions">
+          <a class="pill pill-outline" href="/">New question</a>
+          <a class="pill" href="/docs" target="_blank" rel="noopener">API Docs</a>
+        </div>
+      </div>
+    </header>
 
-      <h2>Citations</h2>
-      {% if citations and citations|length > 0 %}
-        <ul class="card">
-          {% for c in citations %}
-            <li style="margin-bottom: 14px;">
-              <div class="mono">{{ c["chunk_id"] }}</div>
-              <div class="quote">{{ c["quote_html"] | safe }}</div>
-            </li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <div class="card muted">No citations returned.</div>
-      {% endif %}
-      
-    </div>
+    <main class="container">
+      <section class="stack">
+
+        <div class="card card-gradient">
+          <div class="kicker">Query</div>
+          <div class="big">{{ question }}</div>
+
+          <div class="meta-row">
+            {% if doc_id %}
+              <span class="chip chip-cyan">Filtered</span>
+              <span class="chip chip-ghost mono">doc_id: {{ doc_id }}</span>
+            {% else %}
+              <span class="chip chip-amber">All contracts</span>
+              <span class="chip chip-ghost">No doc filter applied</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="card answer-card">
+          <div class="kicker">Answer</div>
+          <div class="answer">{{ answer }}</div>
+          <div class="divider"></div>
+          <div class="muted small">
+            Evidence below shows what was retrieved. If the retrieved text doesn’t contain the answer, treat the answer with caution.
+          </div>
+        </div>
+
+        {% if citations and citations|length > 0 %}
+          <div class="card">
+            <div class="kicker">Citations</div>
+            <div class="muted small">Exact excerpts the model claims to rely on.</div>
+
+            <div class="cite-list">
+              {% for c in citations %}
+                <div class="cite-item">
+                  <div class="cite-head">
+                    <span class="chip chip-purple">Citation</span>
+                    <span class="chip chip-ghost mono">chunk_id: {{ c["chunk_id"] }}</span>
+                  </div>
+                  <div class="cite-body">{{ c["quote_html"] }}</div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="card">
+          <div class="kicker">Retrieved sources</div>
+          <div class="muted small">
+            These are the retrieved contract chunks (in retrieval order). Use them to verify the answer.
+          </div>
+
+          {% if sources and sources|length > 0 %}
+            <div class="sources-grid">
+              {% for s in sources %}
+                <div class="source-card">
+                  <div class="source-top">
+                    <div class="source-title">
+                      <span class="chip chip-green">Source</span>
+                      <span class="chip chip-ghost mono">chunk_id: {{ s["chunk_id"] }}</span>
+                    </div>
+
+                    <div class="source-meta">
+                      <span class="chip chip-ghost">idx: {{ s["chunk_index"] }}</span>
+                      {% if s.get("doc_id") %}
+                        <span class="chip chip-ghost mono">doc: {{ s["doc_id"] }}</span>
+                      {% endif %}
+                      {% if s.get("score") is not none %}
+                        <span class="chip chip-ghost">score: {{ "%.4f"|format(s["score"]) }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <div class="source-body">{{ s["text"] }}</div>
+                </div>
+            {% if not loop.last %}
+            <hr class="source-hr" />
+            {% endif %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="muted">No retrieved chunks returned.</div>
+          {% endif %}
+        </div>
+
+        <footer class="footer">
+          <div>
+            © 2025 ContractIQ Project
+            <span class="dot">•</span>
+            <a class="link" href="https://github.com/AliAlkadhim/ContractIQ" target="_blank" rel="noopener">
+              Source Code
+            </a>
+          </div>
+        </footer>
+      </section>
+    </main>
   </body>
 </html>

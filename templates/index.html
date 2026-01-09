@@ -1,34 +1,189 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>ContractIQ</title>
     <link rel="stylesheet" href="/static/style.css" />
   </head>
+
   <body>
-    <div class="container">
-      <h1>ContractIQ</h1>
-      <p class="muted">Pick a contract and ask a question. (Uses Pinecone + Gemini.)</p>
+    <div class="bg"></div>
 
-      <form method="post" action="/ask" class="card">
-        <label>Contract</label>
-        <select name="doc_id">
-          <option value="">(Search across all contracts)</option>
-          {% for d in docs %}
-            <option value="{{ d['doc_id'] }}">{{ d['title'] }}</option>
-          {% endfor %}
-        </select>
+    <header class="header">
+      <div class="container header-inner">
+        <div class="brand">
+          <div class="logo">CI</div>
+          <div>
+            <div class="brand-title">ContractIQ</div>
+            <div class="brand-sub">Grounded contract Q&A with sources</div>
+          </div>
+        </div>
 
-        <label>Question</label>
-        <input name="question" type="text" placeholder="e.g., What is the governing law?" required />
+        <div class="header-actions">
+          <a class="pill" href="/docs" target="_blank" rel="noopener">API Docs</a>
+          <a class="pill pill-outline" href="/healthz" target="_blank" rel="noopener">Health</a>
+        </div>
+      </div>
+    </header>
 
-        <label>Top K chunks</label>
-        <input name="top_k" type="number" min="3" max="80" value="12" />
+    <main class="container">
+      <section class="hero">
+        <div class="hero-top">
+          <div class="hero-copy">
+            <h1>Ask contracts. Get answers you can verify.</h1>
+            <p class="lead">
+              ContractIQ is a Retrieval-Augmented Generation (RAG) pipeline built on the
+              <strong>Contract Understanding Atticus Dataset (CUAD)</strong> — 510 commercial contracts with
+              13,000+ expert annotations across 41 clause categories.
+            </p>
 
-        <button type="submit">Ask</button>
-      </form>
+            <div class="hero-links">
+              <a class="link" href="https://www.atticusprojectai.org/cuad" target="_blank" rel="noopener">
+                CUAD overview (Atticus Project)
+              </a>
+              <span class="dot">•</span>
+              <a class="link" href="https://arxiv.org/abs/2103.06268" target="_blank" rel="noopener">
+                Paper (arXiv)
+              </a>
+            </div>
 
-      <p class="muted">API docs: <a href="/docs">/docs</a></p>
-    </div>
+            <div class="chip-row">
+              <span class="chip chip-purple">RAG</span>
+              <span class="chip chip-cyan">Pinecone</span>
+              <span class="chip chip-green">Gemini</span>
+              <span class="chip chip-amber">SQL</span>
+            </div>
+          </div>
+
+          <div class="hero-art">
+            <div class="glow-card">
+              <div class="glow-title">Trust, but verify</div>
+              <div class="glow-body">
+                Every answer is generated using retrieved contract chunks — and those chunks are shown
+                so you can audit what the model saw.
+              </div>
+              <div class="glow-mini">
+                Tip: For best precision, select a specific contract before asking.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card card-gradient">
+          <h2 class="card-title">Ask a question</h2>
+          <p class="muted">
+            Choose a contract (or search across all) and ask something like:
+          </p>
+          
+          <div class="example-chips">
+            <span class="example-chip">What is the governing law?</span>
+            <span class="example-chip">What is the effective date?</span>
+            <span class="example-chip">What are the termination terms?</span>
+          </div>
+          
+
+          <form method="post" action="/ask" class="form">
+            <div class="field">
+              <label for="doc_id">Contract</label>
+              <select id="doc_id" name="doc_id">
+                <option value="">Search across all contracts</option>
+                {% for d in docs %}
+                  <option value="{{ d['doc_id'] }}">{{ d['title'] }}</option>
+                {% endfor %}
+              </select>
+              <div class="hint">Selecting a contract reduces cross-document noise.</div>
+            </div>
+
+            <div class="field">
+              <label for="question">Question</label>
+              <input
+                id="question"
+                name="question"
+                type="text"
+                placeholder='e.g., What is the governing law of this agreement?'
+                required
+              />
+              <div class="hint">Be specific: “governing law”, “venue”, “effective date”, “term”, etc.</div>
+            </div>
+
+            <div class="field inline">
+              <div>
+                <label for="top_k">Top-K chunks</label>
+                <input id="top_k" name="top_k" type="number" min="3" max="50" value="12" />
+                <div class="hint">More chunks = more recall (but longer context).</div>
+              </div>
+
+              <button type="submit" class="btn">
+                Ask ContractIQ
+                <span class="btn-arrow">→</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card card-accent">
+          <h2 class="card-title">How ContractIQ works</h2>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">Semantic retrieval (Pinecone)</div>
+                <div class="muted">
+                  Your question is embedded and used to retrieve the most relevant contract chunks.
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">Hybrid data access (SQL + Vector DB)</div>
+                <div class="muted">
+                  Pinecone returns chunk IDs; the full chunk text is fetched from SQLite in retrieval order.
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">Grounded generation (Gemini)</div>
+                <div class="muted">
+                  The model is instructed to answer using only the retrieved text, otherwise say it can’t find it.
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-num">4</div>
+              <div class="step-body">
+                <div class="step-title">Citations & auditability</div>
+                <div class="muted">
+                  Retrieved sources (and optional citations) are displayed so users can verify evidence.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mini-note mini-note-bright">
+            This is a demo-grade contract intelligence UI — the goal is transparency: answers + what was retrieved.
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div>
+          © 2025 ContractIQ Project
+          <span class="dot">•</span>
+          <a class="link" href="https://github.com/AliAlkadhim/ContractIQ" target="_blank" rel="noopener">
+            Source Code
+          </a>
+        </div>
+      </footer>
+    </main>
   </body>
 </html>

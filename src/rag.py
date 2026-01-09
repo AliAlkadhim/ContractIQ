@@ -162,6 +162,21 @@ Chunks:
 {ctx}
 """.strip()
 
+def _get(m, key, default=None):
+    # match objects might be dict-like or attribute-like
+    if m is None:
+        return default
+    if isinstance(m, dict):
+        return m.get(key, default)
+    if hasattr(m, key):
+        return getattr(m, key)
+    if hasattr(m, "get"):
+        try:
+            return m.get(key, default)
+        except Exception:
+            return default
+    return default
+
 
 def rag_answer(question: str, *, doc_id: Optional[str] = None, top_k: int = 8, debug: bool = False) -> Dict[str, Any]:
     # 1) Retrieve
@@ -173,6 +188,25 @@ def rag_answer(question: str, *, doc_id: Optional[str] = None, top_k: int = 8, d
     # 2) Fetch chunk text (your ordered fetch_chunks_by_ids is perfect)
     chunks = fetch_chunks_by_ids(retrieved_ids)
 
+    chunk_map = {c["chunk_id"]: c for c in chunks}
+    ordered_chunks = [chunk_map[cid] for cid in retrieved_ids if cid in chunk_map]
+
+    # attach scores from pinecone matches (if present)
+    score_by_id = {}
+    for m in matches:
+        cid = _get(m, "id")
+        if cid:
+            score_by_id[cid] = _get(m, "score")
+
+    sources = []
+    for c in ordered_chunks[: min(len(ordered_chunks), 8)]:  # show top 8 sources in UI
+        sources.append({
+            "chunk_id": c["chunk_id"],
+            "doc_id": c["doc_id"],
+            "chunk_index": c["chunk_index"],
+            "text": c["text"],
+            "score": score_by_id.get(c["chunk_id"]),
+        })
     # 3) Generate
     prompt = build_prompt_2(question, chunks)
     ai_msg = llm.invoke(prompt)
@@ -181,6 +215,7 @@ def rag_answer(question: str, *, doc_id: Optional[str] = None, top_k: int = 8, d
     return {
         "answer": answer_text,
         "citations": [],  # keep empty for now (UI will show "No citations")
+        "sources": sources,
         "retrieved_chunk_ids": retrieved_ids,
         "doc_id_filter": doc_id,
         "debug": {"matches": matches} if debug else None,
