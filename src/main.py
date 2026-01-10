@@ -19,7 +19,7 @@ from src.rag import rag_answer
 
 
 # --- Paths (project-root based) ---
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = ROOT / "templates"
 STATIC_DIR = ROOT / "static"
 
