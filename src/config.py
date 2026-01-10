@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     pinecone_namespace: str = "cuad-chunks-v2"
     pinecone_metric: str = "cosine"
 
-    local_embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    local_embedding_model: str = "/app/models/all-MiniLM-L6-v2"
     force_cpu: bool = True
     embed_batch_size: int = 64
 

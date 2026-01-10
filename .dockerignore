@@ -11,3 +11,6 @@ build/
 .cache/
 data/
 notebooks/
+.git
+env/
+*.log

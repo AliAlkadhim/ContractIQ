@@ -25,24 +25,12 @@ COPY . /app
 
 # Bake the embedding model into the image (into a *real* local folder)
 # so runtime never calls Hugging Face.
-RUN python - <<'PY'
-import os
-from sentence_transformers import SentenceTransformer
 
-model_id = "sentence-transformers/all-MiniLM-L6-v2"
-local_dir = "/app/models/all-MiniLM-L6-v2"
-os.makedirs(local_dir, exist_ok=True)
-
-m = SentenceTransformer(model_id, device="cpu")
-m.save(local_dir)
-
-print("Saved embedding model to:", local_dir)
-PY
-
+RUN python bake_embedder.py
 # After the model is baked, force offline mode at runtime to guarantee
 # no accidental Hugging Face calls.
 ENV HF_HUB_OFFLINE=1 \
     TRANSFORMERS_OFFLINE=1
 
 # Cloud Run sets PORT; default is 8080
-CMD ["bash", "-lc", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]
+CMD ["bash", "-lc", "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8080}"]

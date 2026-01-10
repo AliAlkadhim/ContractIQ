@@ -17,7 +17,7 @@ REGION="${REGION:-us-central1}"
 SERVICE_NAME="${SERVICE_NAME:-contractiq}"
 AR_REPO="${AR_REPO:-contractiq}"
 IMAGE_NAME="${IMAGE_NAME:-contractiq}"
-
+LOCAL_EMBEDDING_MODEL="/app/models/all-MiniLM-L6-v2"
 # Local path to your populated sqlite db (relative to repo root in Cloud Shell)
 DB_LOCAL_PATH="${DB_LOCAL_PATH:-data/contractrag.db}"
 
@@ -183,8 +183,8 @@ gcloud run deploy "${SERVICE_NAME}" \
   --set-env-vars "SQLITE_PATH=${SQLITE_PATH},GCS_DB_BUCKET=${BUCKET},GCS_DB_OBJECT=${DB_OBJECT}" \
   --update-secrets "PINECONE_API_KEY=PINECONE_API_KEY:latest" \
   --update-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest" \
-  --memory 2Gi \
-  --cpu 1 \
+  --memory 4Gi \
+  --cpu 2 \
   --timeout 300
 
 URL="$(gcloud run services describe "${SERVICE_NAME}" --region "${REGION}" --format='value(status.url)')"
