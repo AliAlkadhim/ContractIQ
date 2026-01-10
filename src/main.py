@@ -19,10 +19,31 @@ from src.rag import rag_answer
 
 
 # --- Paths (project-root based) ---
-ROOT = Path(__file__).resolve().parent.parent
+HERE = Path(__file__).resolve()
+
+def find_repo_root(start: Path) -> Path:
+    """
+    Walk upwards looking for a directory that contains templates/ and static/.
+    Works whether the repo is copied to /app or /app/src or something else.
+    """
+    for base in [start.parent, start.parent.parent, start.parent.parent.parent, start.parent.parent.parent.parent]:
+        if (base / "templates").exists():
+            return base
+    # fallback: original assumption (repo_root = src/..)
+    return start.parent.parent
+
+ROOT = find_repo_root(HERE)
+
 TEMPLATES_DIR = ROOT / "templates"
 STATIC_DIR = ROOT / "static"
 
+print("MAIN FILE:", HERE)
+print("ROOT:", ROOT)
+print("TEMPLATES_DIR:", TEMPLATES_DIR, "exists:", TEMPLATES_DIR.exists())
+print("STATIC_DIR:", STATIC_DIR, "exists:", STATIC_DIR.exists())
+
+
+###############################
 app = FastAPI()
 
 
