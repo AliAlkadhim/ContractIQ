@@ -34,7 +34,7 @@ def load_local_embedder():
     except TypeError:
         # Older versions may not accept token/local_files_only here;
         # loading from a local folder path should still be offline-safe.
-        return SentenceTransformer(model_path, device="cpu")
+        return SentenceTransformer(model_path, device="cpu", local_files_only=True)
 
 
 def embed_query(q: str) -> List[float]:
