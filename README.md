@@ -16,11 +16,7 @@ ContractIQ is an end-to-end **contract question-answering web app** that impleme
 
 ---
 
-## How to open the web app (no local setup required)
-
-If a live deployment is available, open it directly in your browser:
-
-- **Web App URL:** `<<PASTE_YOUR_DEPLOYED_URL_HERE>>`
+## Open the live web application here 👉 https://contractiq-313669223614.us-central1.run.app/
 
 ---
 
@@ -50,7 +46,7 @@ The result page shows the question, the LLM answer, and the retrieved chunks (�
 
 ## Architecture
 
-
+```
 Browser (Jinja templates)
    |
    v
@@ -64,7 +60,7 @@ FastAPI backend (Python)
    |
    v
 HTML response: Answer + Retrieved chunks (sources)
-
+```
 
 
 ## Tech stack
@@ -114,7 +110,7 @@ ContractIQ uses CUAD by ingesting contract texts, chunking documents, storing ch
 
 ## Repo Structure
 
-
+```
 ContractIQ/
 ├── main.py                     # FastAPI app entry (root)
 ├── src/
@@ -135,4 +131,4 @@ ContractIQ/
 ├── data/                       # gitignored (contains contractrag.db locally)
 ├── requirements.txt
 └── README.md
-
+```

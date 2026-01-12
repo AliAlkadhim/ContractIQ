@@ -167,31 +167,34 @@ say "Building and pushing image with Cloud Build (wait for success): ${IMAGE}"
 # IMPORTANT CHANGE:
 # Capture build id and wait, so we never deploy while build is QUEUED/WORKING.
 # Capture build id and wait, so we never deploy while build is QUEUED/WORKING.
-BUILD_ID="$(gcloud builds submit --tag "${IMAGE}" --format='value(id)')"
-echo "Build ID: ${BUILD_ID}"
+# BUILD_ID="$(gcloud builds submit --tag "${IMAGE}" --format='value(id)')"
+# echo "Build ID: ${BUILD_ID}"
 
-say "Streaming Cloud Build logs (Ctrl+C does NOT cancel the build)..."
-gcloud builds log --stream "${BUILD_ID}" || true
+# say "Streaming Cloud Build logs (Ctrl+C does NOT cancel the build)..."
+# gcloud builds log --stream "${BUILD_ID}" || true
 
-say "Waiting for Cloud Build to finish (polling status)..."
-while true; do
-  STATUS="$(gcloud builds describe "${BUILD_ID}" --format='value(status)')"
-  echo "Build status: ${STATUS}"
-  case "${STATUS}" in
-    SUCCESS)
-      say "✅ Cloud Build finished successfully."
-      break
-      ;;
-    FAILURE|CANCELLED|TIMEOUT)
-      echo "ERROR: Cloud Build ended with status: ${STATUS}"
-      exit 1
-      ;;
-    *)
-      sleep 5
-      ;;
-  esac
-done
+# say "Waiting for Cloud Build to finish (polling status)..."
+# while true; do
+#   STATUS="$(gcloud builds describe "${BUILD_ID}" --format='value(status)')"
+#   echo "Build status: ${STATUS}"
+#   case "${STATUS}" in
+#     SUCCESS)
+#       say "✅ Cloud Build finished successfully."
+#       break
+#       ;;
+#     FAILURE|CANCELLED|TIMEOUT)
+#       echo "ERROR: Cloud Build ended with status: ${STATUS}"
+#       exit 1
+#       ;;
+#     *)
+#       sleep 5
+#       ;;
+#   esac
+# done
 
+say "Building and pushing image with Cloud Build: ${IMAGE}"
+gcloud builds submit --tag "${IMAGE}"
+say "✅ Cloud Build finished."
 
 # ----------------------------
 # Deploy Cloud Run
