@@ -88,6 +88,15 @@ HTML response: Answer + Retrieved chunks (sources)
 
 - Gemini via LangChain (`langchain-google-genai`), model: `gemini-2.5-flash`
 
+### Containerization and Deployment and CI/CD
+
+- App is containerized with Docker
+- The app is containerized with Docker.
+- Google Cloud Platform Cloud Build builds the container image and image is pushed to Artifact Registry.
+- Cloud Run pulls the image from Artifact Registry and runs the service.
+- The SQLite DB is stored in Cloud Storage (GCS)
+
+
 ---
 
 ## Dataset: CUAD (Contract Understanding Atticus Dataset)
@@ -105,6 +114,33 @@ ContractIQ uses CUAD by ingesting contract texts, chunking documents, storing ch
 - CUAD overview: https://www.atticusprojectai.org/cuad
 
 - Paper: https://arxiv.org/abs/2103.06268
+
+---
+
+## Cloud deployment architecture (Google Cloud Run)
+
+- Docker image build
+
+- During build, bake_embedder.py runs and saves the embedding model into the image at `/app/models/all-MiniLM-L6-v2`
+
+
+- CI/CD on GCP
+
+    - Cloud Build builds the container image.
+
+    - The image is pushed to Artifact Registry.
+
+- Cloud Run runtime
+
+    - Cloud Run pulls the image from Artifact Registry and runs the service.
+
+
+- SQLite DB distribution
+
+    - The SQLite DB is stored in Cloud Storage (GCS).
+
+    - On startup, the container downloads the DB from GCS into the container’s writable filesystem: `SQLITE_PATH=/tmp/contractrag.db` (Cloud Run runtime)
+
 
 ---
 
